@@ -45,10 +45,15 @@ def gameover(screen: pg.Surface) -> None:
     time.sleep(5)
 
 
-def init_bb_imgs() ->tuple[list[pg.Surface], list[int]]:
+def init_bb_imgs() ->tuple[list[pg.Surface], list[int]]:  # 演習2：時間とともに拡大・加速
+    bb_imgs = []
     for r in range(1,11):
         bb_img = pg.Surface((20*r, 20*r))
         pg.draw.circle(bb_img, (250, 0, 0), (10*r, 10*r), 10*r)
+        bb_imgs.append(bb_img)
+    bb_accs = [a for a in range(1, 11)]
+    return bb_imgs, bb_accs
+
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -57,7 +62,6 @@ def main():
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
-
     bb_img = pg.Surface((20, 20))  # 空のsurface
     pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)  # 練習2-1
     bb_rct = bb_img.get_rect()
@@ -65,7 +69,15 @@ def main():
     vx, vy = +5, +5 #練習2-5
     clock = pg.time.Clock()
     tmr = 0
+    
+    bb_imgs, bb_accs = init_bb_imgs()  # 演習2：時間とともに拡大・加速
+
     while True:
+        avx = vx*bb_accs[min(tmr//500, 9)]  # 演習2：時間とともに拡大・加速
+        avy = vy*bb_accs[min(tmr//500, 9)]
+        bb_img = bb_imgs[min(tmr//500, 9)]
+        bb_rct.width = bb_img.get_rect().width
+        
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
@@ -95,6 +107,7 @@ def main():
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  # 先程の動きをキャンセル
         screen.blit(kk_img, kk_rct)
         # bb_rct.move_ip(vx,vy)  # 練習2-7：爆弾動く
+        bb_rct.move_ip(avx,avy)  # 演習2：時間とともに拡大・加速
         yoko, tate = check_bound(bb_rct)
         if not yoko:  # yoko == False
             vx *= -1
