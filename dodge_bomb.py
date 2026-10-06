@@ -14,6 +14,20 @@ DELTA = {
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
+def check_bound(rect: pg.Rect) -> tuple[bool,bool]:  # 練習3
+    """
+    引数：こうかとんまたは爆弾のRect
+    戻り値：タプル(横方向判定結果、縦方向判定結果)
+    画面内ならTrue/画面外ならFalse
+    """
+    yoko, tate = True, True
+    if rect.left < 0 or WIDTH < rect.right:  # 横方向判定
+        yoko = False
+    if rect.top < 0 or HEIGHT < rect.bottom:  # 縦方向判定
+        tate = False
+    return yoko, tate
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -50,10 +64,19 @@ def main():
                 sum_mv[0] += tpl[0]  # 横方向移動量
                 sum_mv[1] += tpl[1]  # 縦方向移動量
         kk_rct.move_ip(sum_mv)
+        if check_bound(kk_rct) != (True, True):  # どこかしらはみ出てる
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  # 先程の動きをキャンセル
         screen.blit(kk_img, kk_rct)
 
-        bb_rct.move_ip(vx,vy)  # 練習2-7
-        screen.blit(bb_img,bb_rct)  # 練習2-4
+        bb_rct.move_ip(vx,vy)  # 練習2-7：爆弾動く
+
+        yoko, tate = check_bound(bb_rct)
+        if not yoko:  # yoko == False
+            vx *= -1
+        if not tate:  # tate == False
+            vy *= -1
+            
+        screen.blit(bb_img,bb_rct)  # 練習2-4：爆弾表示
         pg.display.update()
         tmr += 1
         clock.tick(50)
