@@ -30,6 +30,11 @@ def check_bound(rect: pg.Rect) -> tuple[bool,bool]:  # 練習3
 
 
 def gameover(screen: pg.Surface) -> None:
+    """
+    引数：画面surface
+    戻り値：なし
+    Game Over時の処理
+    """
     black_bg = pg.Surface((WIDTH,HEIGHT))  # 1-1：空のsurface
     black_bg_rct = black_bg.get_rect()
     pg.draw.rect(black_bg, (0, 0, 0), black_bg_rct)  # 1-1：矩形
@@ -46,8 +51,12 @@ def gameover(screen: pg.Surface) -> None:
 
 
 def init_bb_imgs() ->tuple[list[pg.Surface], list[int]]:  # 演習2：時間とともに拡大・加速
+    """
+    引数：なし
+    戻り値：タプル、リスト
+    """
     bb_imgs = []
-    for r in range(1,11):
+    for r in range(1, 11):
         bb_img = pg.Surface((20*r, 20*r))
         pg.draw.circle(bb_img, (250, 0, 0), (10*r, 10*r), 10*r)
         bb_imgs.append(bb_img)
