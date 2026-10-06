@@ -1,6 +1,7 @@
 import os
-import sys
 import random
+import time  # 1-6：time
+import sys
 import pygame as pg
 
 
@@ -28,6 +29,27 @@ def check_bound(rect: pg.Rect) -> tuple[bool,bool]:  # 練習3
     return yoko, tate
 
 
+def gameover(screen: pg.Surface) -> None:
+    black_bg = pg.Surface((WIDTH,HEIGHT))  # 1-1：空のsurface
+    black_bg_rct = black_bg.get_rect()
+    pg.draw.rect(black_bg, (0, 0, 0), black_bg_rct)  # 1-1：矩形
+    black_bg.set_alpha(200)  # 1-2：透明度設定
+    fonto = pg.font.Font(None, 100)  # 1-3：文字サイズ
+    txt = fonto.render("Game Over", True, (255, 255, 255))  # 1-3：白文字
+    black_bg.blit(txt, [WIDTH*(1/3), HEIGHT*(1/2)])  # 1-3：文字貼り付け
+    kk_cry_img = pg.image.load("fig/8.png")  # 1-4：こうかとんsurface作成
+    black_bg.blit(kk_cry_img, [WIDTH*(3/4),HEIGHT*(1/2)])
+    black_bg.blit(kk_cry_img, [WIDTH*(1/4),HEIGHT*(1/2)])
+    screen.blit(black_bg, [0, 0])
+    pg.display.update()
+    time.sleep(5)
+
+
+def init_bb_imgs() ->tuple[list[pg.Surface], list[int]]:
+    for r in range(1,11):
+        bb_img = pg.Surface((20*r, 20*r))
+        pg.draw.circle(bb_img, (250, 0, 0), (10*r, 10*r), 10*r)
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -51,6 +73,7 @@ def main():
 
         if kk_rct.colliderect(bb_rct):  # kkとbbのrectが重なっていたら
             print("game over")
+            gameover(screen)
             return
         
         key_lst = pg.key.get_pressed()
@@ -71,9 +94,7 @@ def main():
         if check_bound(kk_rct) != (True, True):  # どこかしらはみ出てる
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  # 先程の動きをキャンセル
         screen.blit(kk_img, kk_rct)
-
-        bb_rct.move_ip(vx,vy)  # 練習2-7：爆弾動く
-
+        # bb_rct.move_ip(vx,vy)  # 練習2-7：爆弾動く
         yoko, tate = check_bound(bb_rct)
         if not yoko:  # yoko == False
             vx *= -1
