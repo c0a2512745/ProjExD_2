@@ -1,5 +1,6 @@
 import os
 import sys
+import random
 import pygame as pg
 
 
@@ -20,6 +21,12 @@ def main():
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
+
+    bb_img = pg.Surface((20, 20))  # 空のsurface
+    pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)  # 練習2-1
+    bb_rct = bb_img.get_rect()
+    bb_rct.center = random.randint(0,WIDTH),random.randint(0,HEIGHT)  # 練習2-3
+    vx, vy = +5, +5 #練習2-5
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -44,6 +51,9 @@ def main():
                 sum_mv[1] += tpl[1]  # 縦方向移動量
         kk_rct.move_ip(sum_mv)
         screen.blit(kk_img, kk_rct)
+
+        bb_rct.move_ip(vx,vy)  # 練習2-7
+        screen.blit(bb_img,bb_rct)  # 練習2-4
         pg.display.update()
         tmr += 1
         clock.tick(50)
